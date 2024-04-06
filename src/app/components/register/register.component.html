@@ -2,23 +2,43 @@
   <div class="container">
     <div class="forms-container">
       <div class="signin-signup">
-        <form action="" class="sign-in-form">
+        <form action="" class="sign-in-form" (ngSubmit)="submit()">
           <h2 class="title">Sign In</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
-            <input type="text" placeholder="FirstName" />
+            <input
+              type="text"
+              placeholder="FirstName"
+              [(ngModel)]="payload.firstName"
+              [ngModelOptions]="{ standalone: true }"
+            />
           </div>
           <div class="input-field">
             <i class="fas fa-user"></i>
-            <input type="text" placeholder="LastName" />
+            <input
+              type="text"
+              placeholder="LastName"
+              [(ngModel)]="payload.lastName"
+              [ngModelOptions]="{ standalone: true }"
+            />
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input type="text" placeholder="Email" />
+            <input
+              type="text"
+              placeholder="Email"
+              [(ngModel)]="payload.email"
+              [ngModelOptions]="{ standalone: true }"
+            />
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input type="password" placeholder="password" />
+            <input
+              type="password"
+              placeholder="password"
+              [(ngModel)]="payload.password"
+              [ngModelOptions]="{ standalone: true }"
+            />
           </div>
           <input type="submit" value="Sign up" class="btn solid" />
 
@@ -48,11 +68,7 @@
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio minus
             natus est.
           </p>
-          <button
-            class="btn transparent"
-            (click)="navigateTo()"
-            id="sign-up-btn"
-          >
+          <button class="btn transparent" routerLink="/login" id="sign-up-btn">
             Sign In
           </button>
         </div>
