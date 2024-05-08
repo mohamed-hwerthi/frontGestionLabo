@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { Table } from 'primeng/table';
 import { Product } from '../salle-tp/salle-tp.component';
 import { MessageService } from 'primeng/api';
-import { ProductService } from 'src/app/services/product.service';
+import { LaboService } from 'src/app/services/labo.service';
+import { LaboResponseDto } from 'src/app/models/Response/LaboResponseDto';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-labo',
@@ -17,7 +19,7 @@ export class LaboComponent {
 
   deleteProductsDialog: boolean = false;
 
-  products: Product[] = [];
+  products: LaboResponseDto[] = [];
 
   product: Product = {};
 
@@ -30,47 +32,18 @@ export class LaboComponent {
   statuses: any[] = [];
 
   rowsPerPageOptions = [5, 10, 20];
+  allLabo: LaboResponseDto[] = [];
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private laboService: LaboService
+  ) {}
 
   ngOnInit() {
-    this.products = [
-      {
-        id: '1000',
-        code: 'f230fh0g3',
-        name: 'Bamboo Watch',
-        description: 'Product Description',
-        image: 'bamboo-watch.jpg',
-        price: 65,
-        category: 'Accessories',
-        quantity: 24,
-        rating: 5,
-      },
-      {
-        id: '1001',
-        code: 'nvklal433',
-        name: 'Black Watch',
-        description: 'Product Description',
-        image: 'black-watch.jpg',
-        price: 72,
-        category: 'Accessories',
-        quantity: 61,
-        rating: 4,
-      },
-      {
-        id: '1002',
-        code: 'zz21cz3c1',
-        name: 'Blue Band',
-        description: 'Product Description',
-        image: 'blue-band.jpg',
-        price: 79,
-        category: 'Fitness',
-        quantity: 2,
-        rating: 3,
-      },
-      // Continuer avec les autres objets...
-    ];
-
+    this.getAllLabo();
+    this.getLaboById('6600995de6e2d8326b59c481');
+    this.deleteLabo('6600995de6e2d8326b59c481');
+   
     this.cols = [
       { field: 'product', header: 'Product' },
       { field: 'price', header: 'Price' },
@@ -114,7 +87,7 @@ export class LaboComponent {
     this.messageService.add({
       severity: 'success',
       summary: 'Successful',
-      detail: 'Products Deleted',
+      detail: 'Produc6600995de6e2d8326b59c481ts Deleted',
       life: 3000,
     });
     this.selectedProducts = [];
@@ -137,44 +110,7 @@ export class LaboComponent {
     this.submitted = false;
   }
 
-  saveProduct() {
-    this.submitted = true;
 
-    if (this.product.name?.trim()) {
-      if (this.product.id) {
-        // @ts-ignore
-        /* this.product.inventoryStatus = this.product.inventoryStatus.value
-          ? this.product.inventoryStatus.value
-          : this.product.inventoryStatus; */
-        this.products[this.findIndexById(this.product.id)] = this.product;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Updated',
-          life: 3000,
-        });
-      } else {
-        this.product.id = this.createId();
-        this.product.code = this.createId();
-        this.product.image = 'product-placeholder.svg';
-        // @ts-ignore
-        this.product.inventoryStatus = this.product.inventoryStatus
-          ? this.product.inventoryStatus.value
-          : 'INSTOCK';
-        this.products.push(this.product);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Created',
-          life: 3000,
-        });
-      }
-
-      this.products = [...this.products];
-      this.productDialog = false;
-      this.product = {};
-    }
-  }
 
   findIndexById(id: string): number {
     let index = -1;
@@ -200,5 +136,35 @@ export class LaboComponent {
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  // consuming labo services :
+  getAllLabo() {
+    return this.laboService.getAlLabo().subscribe(
+      (res: LaboResponseDto[]) => {
+        this.allLabo = res;
+        this.products = res;
+      },
+      (err: HttpErrorResponse) => {
+        console.log(err);
+      }
+    );
+  }
+
+  getLaboById(id: string) {
+    return this.laboService.getLaboById(id).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  deleteLabo(id: string) {
+    return this.laboService.deleteLabo(id).subscribe((res: void) => {
+      console.log('deleted');
+    });
   }
 }

@@ -2,27 +2,59 @@
   <div class="container">
     <div class="forms-container">
       <div class="signin-signup">
-        <form action="" class="sign-in-form" (ngSubmit)="submit()">
+        <form
+          action=""
+          class="sign-in-form"
+          (ngSubmit)="submit()"
+          [formGroup]="signInForm"
+        >
           <h2 class="title">Sign In</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
             <input
+              formControlName="email"
               type="text"
               placeholder="email"
               [(ngModel)]="payload.email"
-              [ngModelOptions]="{ standalone: true }"
             />
           </div>
+          <div
+            *ngIf="
+              signInForm.controls.email?.touched &&
+              signInForm.controls.email?.invalid
+            "
+            class="text-danger"
+            style="color: red"
+          >
+            Email is required.
+          </div>
+
           <div class="input-field">
             <i class="fas fa-lock"></i>
             <input
               type="password"
               placeholder="Password"
               [(ngModel)]="payload.password"
-              [ngModelOptions]="{ standalone: true }"
+              formControlName="password"
             />
           </div>
-          <input type="submit" value="Login" class="btn solid" />
+          <div
+            *ngIf="
+              signInForm.controls.password?.touched &&
+              signInForm.controls.password?.invalid
+            "
+            class="text-danger"
+            style="color: red"
+          >
+            Password is Required
+          </div>
+
+          <input
+            type="submit"
+            value="Login"
+            class="btn solid"
+            [disabled]="!signInForm.valid"
+          />
 
           <p class="social-text">Or Sign in with social platforms</p>
           <div class="social-media">

@@ -2,45 +2,96 @@
   <div class="container">
     <div class="forms-container">
       <div class="signin-signup">
-        <form action="" class="sign-in-form" (ngSubmit)="submit()">
+        <form
+          action=""
+          class="sign-in-form"
+          (ngSubmit)="submit()"
+          [formGroup]="signUpForm"
+        >
           <h2 class="title">Sign In</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
             <input
+              formControlName="firstName"
               type="text"
               placeholder="FirstName"
               [(ngModel)]="payload.firstName"
-              [ngModelOptions]="{ standalone: true }"
             />
+          </div>
+          <div
+            *ngIf="
+              signUpForm.controls.firstName?.touched &&
+              signUpForm.controls.firstName?.invalid
+            "
+            class="text-danger"
+            style="color: red"
+          >
+            firstName is Required
           </div>
           <div class="input-field">
             <i class="fas fa-user"></i>
             <input
+              formControlName="lastName"
               type="text"
               placeholder="LastName"
               [(ngModel)]="payload.lastName"
-              [ngModelOptions]="{ standalone: true }"
             />
           </div>
+          <div
+            *ngIf="
+              signUpForm.controls.lastName?.touched &&
+              signUpForm.controls.lastName?.invalid
+            "
+            class="text-danger"
+            style="color: red"
+          >
+            lastName is Required
+          </div>
+
           <div class="input-field">
             <i class="fas fa-lock"></i>
             <input
+              formControlName="email"
               type="text"
               placeholder="Email"
               [(ngModel)]="payload.email"
-              [ngModelOptions]="{ standalone: true }"
             />
+          </div>
+          <div
+            *ngIf="
+              signUpForm.controls.email?.touched &&
+              signUpForm.controls.email?.invalid
+            "
+            class="text-danger"
+            style="color: red"
+          >
+            email is Required
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
             <input
+              formControlName="password"
               type="password"
               placeholder="password"
               [(ngModel)]="payload.password"
-              [ngModelOptions]="{ standalone: true }"
             />
           </div>
-          <input type="submit" value="Sign up" class="btn solid" />
+          <div
+            *ngIf="
+              signUpForm.controls.password?.touched &&
+              signUpForm.controls.password?.invalid
+            "
+            class="text-danger"
+            style="color: red"
+          >
+            Password is Required
+          </div>
+          <input
+            type="submit"
+            value="Sign up"
+            class="btn solid"
+            [disabled]="!signUpForm.valid"
+          />
 
           <p class="social-text">Or Sign in with social platforms</p>
           <div class="social-media">

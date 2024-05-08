@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SignInRequestModel } from 'src/app/models/Request/RequestModel';
 import { AuthService } from 'src/app/services/auth.service';
@@ -15,7 +16,12 @@ export class LoginComponent {
     email: '',
     password: '',
   };
+  //handek form   :
 
+  signInForm = new FormGroup({
+    email: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required]),
+  });
   submit() {
     this.SignInRequest();
   }
