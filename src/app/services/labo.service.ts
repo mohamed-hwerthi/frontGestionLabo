@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LaboResponseDto } from '../models/Response/LaboResponseDto';
+import { LaboResponseDto, LaboType } from '../models/Response/LaboResponseDto';
 import { environment } from 'src/environments/environment.development';
 import { LaboRequestDto } from '../models/Request/LaboRequestDto';
 
@@ -24,13 +24,16 @@ export class LaboService {
   }
 
   //delete labo  :
-  deleteLabo(id: string): Observable<void> {
+  deleteLabo(id: string | undefined): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/labo/${id}`);
   }
   //save labo  :
-  saveLabo(labo: LaboRequestDto): Observable<LaboResponseDto> {
-    return this.http.post<LaboResponseDto>(`${environment.apiUrl}/labo`, {
-      labo,
-    });
+  saveLabo(laboType: LaboType): Observable<LaboResponseDto> {
+    console.log('add labo service ');
+    console.log(laboType);
+    return this.http.post<LaboResponseDto>(
+      `${environment.apiUrl}/labo`,
+      laboType
+    );
   }
 }

@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
-import { Table } from 'primeng/table';
 import { Product } from '../salle-tp/salle-tp.component';
 import { MessageService } from 'primeng/api';
 import { LaboService } from 'src/app/services/labo.service';
-import { LaboResponseDto } from 'src/app/models/Response/LaboResponseDto';
+import {
+  LaboResponseDto,
+  LaboType,
+} from 'src/app/models/Response/LaboResponseDto';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LaboRequestDto } from 'src/app/models/Request/LaboRequestDto';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-labo',
@@ -18,21 +22,15 @@ export class LaboComponent {
   deleteProductDialog: boolean = false;
 
   deleteProductsDialog: boolean = false;
-
-  products: LaboResponseDto[] = [];
-
-  product: Product = {};
-
-  selectedProducts: Product[] = [];
-
+  labo: LaboType = LaboType.informatique;
   submitted: boolean = false;
-
   cols: any[] = [];
-
-  statuses: any[] = [];
-
-  rowsPerPageOptions = [5, 10, 20];
   allLabo: LaboResponseDto[] = [];
+  laboRes!: LaboResponseDto;
+
+  form = new FormGroup({
+    laboType: new FormControl('', [Validators.required]),
+  });
 
   constructor(
     private messageService: MessageService,
@@ -41,68 +39,39 @@ export class LaboComponent {
 
   ngOnInit() {
     this.getAllLabo();
-    this.getLaboById('6600995de6e2d8326b59c481');
-    this.deleteLabo('6600995de6e2d8326b59c481');
-   
-    this.cols = [
-      { field: 'product', header: 'Product' },
-      { field: 'price', header: 'Price' },
-      { field: 'category', header: 'Category' },
-      { field: 'rating', header: 'Reviews' },
-      { field: 'inventoryStatus', header: 'Status' },
-    ];
-
-    this.statuses = [
-      { label: 'INSTOCK', value: 'instock' },
-      { label: 'LOWSTOCK', value: 'lowstock' },
-      { label: 'OUTOFSTOCK', value: 'outofstock' },
-    ];
   }
+  laboType: string[] = [
+    'technique',
+    'scientifique',
+    'informatique',
+    'physique',
+  ];
 
   openNew() {
-    this.product = {};
     this.submitted = false;
     this.productDialog = true;
   }
 
-  deleteSelectedProducts() {
-    this.deleteProductsDialog = true;
-  }
-
   editProduct(product: Product) {
-    this.product = { ...product };
     this.productDialog = true;
   }
 
-  deleteProduct(product: Product) {
+  deleteProduct(labo: LaboResponseDto) {
     this.deleteProductDialog = true;
-    this.product = { ...product };
+    this.laboRes = { ...labo };
   }
-
-  confirmDeleteSelected() {
-    this.deleteProductsDialog = false;
-    this.products = this.products.filter(
-      (val) => !this.selectedProducts.includes(val)
-    );
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Produc6600995de6e2d8326b59c481ts Deleted',
-      life: 3000,
-    });
-    this.selectedProducts = [];
-  }
-
-  confirmDelete() {
+  confirmDelete(laboId: string | undefined) {
+    console.log(laboId);
+    console.log('confirm delete');
+    this.deleteLabo(laboId);
     this.deleteProductDialog = false;
-    this.products = this.products.filter((val) => val.id !== this.product.id);
+    this.allLabo = this.allLabo.filter((val) => val.id !== laboId);
     this.messageService.add({
       severity: 'success',
       summary: 'Successful',
       detail: 'Product Deleted',
       life: 3000,
     });
-    this.product = {};
   }
 
   hideDialog() {
@@ -110,40 +79,11 @@ export class LaboComponent {
     this.submitted = false;
   }
 
-
-
-  findIndexById(id: string): number {
-    let index = -1;
-    for (let i = 0; i < this.products.length; i++) {
-      if (this.products[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  }
-
-  createId(): string {
-    let id = '';
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-  }
-
-  onGlobalFilter(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
-  }
-
-  // consuming labo services :
+  /* services consumming  */
   getAllLabo() {
     return this.laboService.getAlLabo().subscribe(
       (res: LaboResponseDto[]) => {
         this.allLabo = res;
-        this.products = res;
       },
       (err: HttpErrorResponse) => {
         console.log(err);
@@ -151,6 +91,16 @@ export class LaboComponent {
     );
   }
 
+  /* methode to add labo  , this methode calls the labo methode which calls the service wich work with the back */
+  saveLabo() {
+    this.addLabo(this.labo);
+    let labo: LaboResponseDto = {
+      id: '234242499999823',
+      laboType: this.labo,
+    };
+    this.allLabo = [labo, ...this.allLabo];
+    this.productDialog = false;
+  }
   getLaboById(id: string) {
     return this.laboService.getLaboById(id).subscribe(
       (res) => {
@@ -162,9 +112,19 @@ export class LaboComponent {
     );
   }
 
-  deleteLabo(id: string) {
-    return this.laboService.deleteLabo(id).subscribe((res: void) => {
-      console.log('deleted');
-    });
+  deleteLabo(id: string | undefined) {
+    return this.laboService.deleteLabo(id).subscribe((res: void) => {});
+  }
+  addLabo(laboType: LaboType) {
+    console.log(laboType);
+    return this.laboService.saveLabo(laboType).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log('error in adding labo');
+        console.log(err);
+      }
+    );
   }
 }

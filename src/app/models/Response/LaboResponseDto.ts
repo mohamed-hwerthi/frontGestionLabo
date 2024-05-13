@@ -1,6 +1,6 @@
 export interface LaboResponseDto {
-  id: String;
-  type: LaboType;
+  id: string;
+  laboType: LaboType;
 }
 
 export enum LaboType {
