@@ -42,6 +42,7 @@ import { InventaireComponent } from './components/inventaire/inventaire.componen
 import { CalendarModule } from 'primeng/calendar';
 import { ProductsComponent } from './components/products/products.component';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ChartModule } from 'primeng/chart';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     CalendarModule,
     ReactiveFormsModule,
     SkeletonModule,
+    ChartModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
