@@ -65,6 +65,10 @@ const routes: Routes = [
         path: 'inv',
         component: InventaireComponent,
       },
+      {
+        path: 'salleTp',
+        component: SalleTpComponent,
+      },
     ],
   },
   {

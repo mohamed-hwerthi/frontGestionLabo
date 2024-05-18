@@ -41,7 +41,7 @@
           <div
             class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
           >
-            <h5 class="m-0">Manage Labo</h5>
+            <h5 class="m-0">Manage Products</h5>
           </div>
         </ng-template>
         <!-- les titres du tableau  -->
@@ -74,7 +74,6 @@
                   pRipple
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
-                  (click)="editProduct(product)"
                 ></button>
                 <!-- fontion delete  -->
                 <button
@@ -98,30 +97,19 @@
       [style]="{ width: '450px' }"
       header="Labo "
       [modal]="true"
-      class="p-fluid"
+      class="p-fluid h-6"
     >
       <ng-template pTemplate="content">
-        <form action="" class="sign-in-form" [formGroup]="form">
+        <div class="mm">
           <div class="field">
             <p-dropdown
               [(ngModel)]="labo"
               [options]="laboType"
               placeholder="Select a Labo Type"
-              formControlName="laboType"
             >
             </p-dropdown>
-            <div
-              *ngIf="
-                form.controls.laboType?.touched &&
-                form.controls.laboType?.invalid
-              "
-              class="text-danger"
-              style="color: red"
-            >
-              laboType is required.
-            </div>
           </div>
-        </form>
+        </div>
       </ng-template>
       <!-- dialog add labo  -->
 

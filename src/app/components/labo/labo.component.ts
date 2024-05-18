@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Product } from '../salle-tp/salle-tp.component';
 import { MessageService } from 'primeng/api';
 import { LaboService } from 'src/app/services/labo.service';
 import {
@@ -7,7 +6,6 @@ import {
   LaboType,
 } from 'src/app/models/Response/LaboResponseDto';
 import { HttpErrorResponse } from '@angular/common/http';
-import { LaboRequestDto } from 'src/app/models/Request/LaboRequestDto';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -18,19 +16,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class LaboComponent {
   productDialog: boolean = false;
-
   deleteProductDialog: boolean = false;
-
   deleteProductsDialog: boolean = false;
-  labo: LaboType = LaboType.informatique;
+  labo!: string;
   submitted: boolean = false;
   cols: any[] = [];
   allLabo: LaboResponseDto[] = [];
   laboRes!: LaboResponseDto;
-
-  form = new FormGroup({
-    laboType: new FormControl('', [Validators.required]),
-  });
 
   constructor(
     private messageService: MessageService,
@@ -52,9 +44,9 @@ export class LaboComponent {
     this.productDialog = true;
   }
 
-  editProduct(product: Product) {
+  /*   editProduct(product: Product) {
     this.productDialog = true;
-  }
+  } */
 
   deleteProduct(labo: LaboResponseDto) {
     this.deleteProductDialog = true;
@@ -94,11 +86,6 @@ export class LaboComponent {
   /* methode to add labo  , this methode calls the labo methode which calls the service wich work with the back */
   saveLabo() {
     this.addLabo(this.labo);
-    let labo: LaboResponseDto = {
-      id: '234242499999823',
-      laboType: this.labo,
-    };
-    this.allLabo = [labo, ...this.allLabo];
     this.productDialog = false;
   }
   getLaboById(id: string) {
@@ -115,14 +102,14 @@ export class LaboComponent {
   deleteLabo(id: string | undefined) {
     return this.laboService.deleteLabo(id).subscribe((res: void) => {});
   }
-  addLabo(laboType: LaboType) {
-    console.log(laboType);
-    return this.laboService.saveLabo(laboType).subscribe(
+  addLabo(labo: string) {
+    console.log(labo);
+    return this.laboService.saveLabo(labo).subscribe(
       (res) => {
         console.log(res);
+        this.allLabo = [res, ...this.allLabo];
       },
       (err) => {
-        console.log('error in adding labo');
         console.log(err);
       }
     );

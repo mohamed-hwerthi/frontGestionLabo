@@ -15,30 +15,11 @@
             ></button>
           </div>
         </ng-template>
-
-        <ng-template pTemplate="right">
-          <p-fileUpload
-            mode="basic"
-            accept="image/*"
-            [maxFileSize]="1000000"
-            label="Import"
-            chooseLabel="Import"
-            class="mr-2 inline-block"
-          ></p-fileUpload>
-          <button
-            pButton
-            pRipple
-            label="Export"
-            icon="pi pi-upload"
-            class="p-button-help"
-            (click)="dt.exportCSV()"
-          ></button>
-        </ng-template>
       </p-toolbar>
-
+      <!--      tableau d'affichage  -->
       <p-table
         #dt
-        [value]="products"
+        [value]="allProduits"
         [columns]="cols"
         responsiveLayout="scroll"
         [rows]="10"
@@ -52,7 +33,6 @@
         [rowsPerPageOptions]="[10, 20, 30]"
         [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [(selection)]="selectedProducts"
         selectionMode="multiple"
         [rowHover]="true"
         dataKey="id"
@@ -62,60 +42,51 @@
             class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
           >
             <h5 class="m-0">Manage Products</h5>
-            <span class="block mt-2 md:mt-0 p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                (input)="onGlobalFilter(dt, $event)"
-                placeholder="Search..."
-                class="w-full sm:w-auto"
-              />
-            </span>
           </div>
         </ng-template>
+        <!-- les titres du tableau  -->
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 3rem">
-              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-            </th>
-            <th pSortableColumn="code">
-              Code <p-sortIcon field="code"></p-sortIcon>
-            </th>
-            <th pSortableColumn="name">
-              Name <p-sortIcon field="name"></p-sortIcon>
-            </th>
-
-            <th pSortableColumn="inventoryStatus">
-              Status <p-sortIcon field="inventoryStatus"></p-sortIcon>
-            </th>
+            <th pSortableColumn="code">Designation</th>
+            <th pSortableColumn="name">Reference</th>
+            <th pSortableColumn="name">Type</th>
+            <th pSortableColumn="name">Quantite Initiale</th>
+            <th pSortableColumn="name">Categorie</th>
             <th>Actions</th>
           </tr>
         </ng-template>
+        <!-- les titres du tableau  -->
+        <!-- le contenu du tableau -->
         <ng-template pTemplate="body" let-product>
           <tr>
-            <td>
-              <p-tableCheckbox [value]="product"></p-tableCheckbox>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product?.designation }}
             </td>
             <td style="width: 14%; min-width: 10rem">
-              <span class="p-column-title">Code</span>
-              {{ product.code || product.id }}
+              {{ product?.reference }}
             </td>
             <td style="width: 14%; min-width: 10rem">
-              <span class="p-column-title">Name</span>
-              {{ product.name }}
+              {{ product?.type }}
             </td>
-            <td>Status</td>
+
+            <td style="width: 14%; min-width: 10rem">
+              {{ product?.quantiteInitiale }}
+            </td>
+            <td style="width: 14%; min-width: 10rem">
+              {{ product?.categorie.designation }}
+            </td>
 
             <td>
               <div class="flex">
+                <!-- fonction edit  -->
+
                 <button
                   pButton
                   pRipple
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
-                  (click)="editProduct(product)"
                 ></button>
+                <!-- fontion delete  -->
                 <button
                   pButton
                   pRipple
@@ -127,229 +98,111 @@
             </td>
           </tr>
         </ng-template>
+        <!-- le contenu du tableau -->
       </p-table>
     </div>
+    <!-- dialog add labo  -->
 
     <p-dialog
       [(visible)]="productDialog"
       [style]="{ width: '450px' }"
-      header="Product Details"
+      header="Product  "
       [modal]="true"
-      class="p-fluid"
+      class="p-fluid h-6"
     >
       <ng-template pTemplate="content">
-        <img
-          [src]="'assets/demo/images/product/' + product.image"
-          [alt]="product.image"
-          width="150"
-          class="mt-0 mx-auto mb-5 block shadow-2"
-          *ngIf="product.image"
-        />
         <div class="field">
-          <label for="name">designation</label>
           <input
-            type="text"
             pInputText
-            id="name"
-            [(ngModel)]="product.name"
-            required
-            autofocus
-            [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.name }"
+            type="text"
+            placeholder="Designation"
+            class="w-full sm:w-auto"
+            [(ngModel)]="produitPayLoad.designation"
           />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name"
-            >Name is required.</small
+        </div>
+        <div class="field">
+          <input
+            pInputText
+            type="text"
+            placeholder="Reference"
+            class="w-full sm:w-auto"
+            [(ngModel)]="produitPayLoad.reference"
+          />
+        </div>
+        <div class="field">
+          <input
+            pInputText
+            type="text"
+            placeholder="Quantite Initiale "
+            class="w-full sm:w-auto"
+            [(ngModel)]="produitPayLoad.quantiteInitiale"
+          />
+        </div>
+        <div class="field">
+          <p-dropdown
+            [(ngModel)]="produitPayLoad.type"
+            [options]="allProduitType"
+            placeholder="Select Type"
           >
+          </p-dropdown>
         </div>
 
         <div class="field">
-          <label for="name">référence</label>
-          <input
-            type="text"
-            pInputText
-            id="name"
-            [(ngModel)]="product.name"
-            required
-            autofocus
-            [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.name }"
-          />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name"
-            >Name is required.</small
-          >
-        </div>
-        <div class="field">
-          <label for="name">Quantite initiale</label>
-          <input
-            type="text"
-            pInputText
-            id="name"
-            [(ngModel)]="product.name"
-            required
-            autofocus
-            [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.name }"
-          />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.name"
-            >Name is required.</small
-          >
-        </div>
-        <div class="field">
-          <label for="status">Type</label>
           <p-dropdown
-            [(ngModel)]="product.inventoryStatus"
-            inputId="inventoryStatus"
-            optionValue="label"
-            [options]="statuses"
-            placeholder="Select"
+            [(ngModel)]="produitPayLoad.idCategorie"
+            [options]="allCategories"
+            optionLabel="designation"
+            optionValue="id"
+            placeholder="Select Categorie"
           >
-            <ng-template pTemplate="selectedItem">
-              <span
-                *ngIf="product && product.inventoryStatus"
-                [class]="
-                  'product-badge status-' +
-                  product.inventoryStatus.toString().toLowerCase()
-                "
-                >{{ product.inventoryStatus }}</span
-              >
-            </ng-template>
-            <ng-template let-option pTemplate="item">
-              <span [class]="'product-badge status-' + option.value">{{
-                option.label
-              }}</span>
-            </ng-template>
           </p-dropdown>
         </div>
         <div class="field">
-          <label for="status">Categorie</label>
           <p-dropdown
-            [(ngModel)]="product.inventoryStatus"
-            inputId="inventoryStatus"
-            optionValue="label"
-            [options]="statuses"
-            placeholder="Select"
+            [(ngModel)]="produitPayLoad.idRubrique"
+            [options]="allRubriques"
+            optionLabel="designation"
+            optionValue="id"
+            placeholder="Select Rubrique"
           >
-            <ng-template pTemplate="selectedItem">
-              <span
-                *ngIf="product && product.inventoryStatus"
-                [class]="
-                  'product-badge status-' +
-                  product.inventoryStatus.toString().toLowerCase()
-                "
-                >{{ product.inventoryStatus }}</span
-              >
-            </ng-template>
-            <ng-template let-option pTemplate="item">
-              <span [class]="'product-badge status-' + option.value">{{
-                option.label
-              }}</span>
-            </ng-template>
           </p-dropdown>
         </div>
+
         <div class="field">
-          <label for="status">Rubrique</label>
           <p-dropdown
-            [(ngModel)]="product.inventoryStatus"
-            inputId="inventoryStatus"
-            optionValue="label"
-            [options]="statuses"
-            placeholder="Select"
+            [(ngModel)]="produitPayLoad.idArmoire"
+            [options]="allArmoires"
+            optionLabel="designation"
+            optionValue="id"
+            placeholder="Select Armoire"
           >
-            <ng-template pTemplate="selectedItem">
-              <span
-                *ngIf="product && product.inventoryStatus"
-                [class]="
-                  'product-badge status-' +
-                  product.inventoryStatus.toString().toLowerCase()
-                "
-                >{{ product.inventoryStatus }}</span
-              >
-            </ng-template>
-            <ng-template let-option pTemplate="item">
-              <span [class]="'product-badge status-' + option.value">{{
-                option.label
-              }}</span>
-            </ng-template>
           </p-dropdown>
         </div>
+
         <div class="field">
-          <label for="status">Armoire</label>
           <p-dropdown
-            [(ngModel)]="product.inventoryStatus"
-            inputId="inventoryStatus"
-            optionValue="label"
-            [options]="statuses"
-            placeholder="Select"
+            [(ngModel)]="produitPayLoad.idFournisseur"
+            [options]="allFournisseurs"
+            optionLabel="nom"
+            optionValue="id"
+            placeholder="Select Fournisseurs"
           >
-            <ng-template pTemplate="selectedItem">
-              <span
-                *ngIf="product && product.inventoryStatus"
-                [class]="
-                  'product-badge status-' +
-                  product.inventoryStatus.toString().toLowerCase()
-                "
-                >{{ product.inventoryStatus }}</span
-              >
-            </ng-template>
-            <ng-template let-option pTemplate="item">
-              <span [class]="'product-badge status-' + option.value">{{
-                option.label
-              }}</span>
-            </ng-template>
           </p-dropdown>
         </div>
+
         <div class="field">
-          <label for="status">Fournisseur</label>
           <p-dropdown
-            [(ngModel)]="product.inventoryStatus"
-            inputId="inventoryStatus"
-            optionValue="label"
-            [options]="statuses"
-            placeholder="Select"
+            [(ngModel)]="produitPayLoad.uniteMesure"
+            [options]="allUniteMesures"
+            placeholder="Select unite Mesure "
           >
-            <ng-template pTemplate="selectedItem">
-              <span
-                *ngIf="product && product.inventoryStatus"
-                [class]="
-                  'product-badge status-' +
-                  product.inventoryStatus.toString().toLowerCase()
-                "
-                >{{ product.inventoryStatus }}</span
-              >
-            </ng-template>
-            <ng-template let-option pTemplate="item">
-              <span [class]="'product-badge status-' + option.value">{{
-                option.label
-              }}</span>
-            </ng-template>
-          </p-dropdown>
-        </div>
-        <div class="field">
-          <label for="status">Unite Mesure</label>
-          <p-dropdown
-            [(ngModel)]="product.inventoryStatus"
-            inputId="inventoryStatus"
-            optionValue="label"
-            [options]="statuses"
-            placeholder="Select"
-          >
-            <ng-template pTemplate="selectedItem">
-              <span
-                *ngIf="product && product.inventoryStatus"
-                [class]="
-                  'product-badge status-' +
-                  product.inventoryStatus.toString().toLowerCase()
-                "
-                >{{ product.inventoryStatus }}</span
-              >
-            </ng-template>
-            <ng-template let-option pTemplate="item">
-              <span [class]="'product-badge status-' + option.value">{{
-                option.label
-              }}</span>
-            </ng-template>
           </p-dropdown>
         </div>
       </ng-template>
+      <!-- dialog add labo  -->
 
       <ng-template pTemplate="footer">
+        <!-- button to cancel adding  -->
         <button
           pButton
           pRipple
@@ -358,6 +211,7 @@
           class="p-button-text"
           (click)="hideDialog()"
         ></button>
+        <!-- button to save  -->
         <button
           pButton
           pRipple
@@ -369,6 +223,7 @@
       </ng-template>
     </p-dialog>
 
+    <!-- delete one  product dialog  -->
     <p-dialog
       [(visible)]="deleteProductDialog"
       header="Confirm"
@@ -377,8 +232,8 @@
     >
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-        <span *ngIf="product"
-          >Are you sure you want to delete <b>{{ product.name }}</b
+        <span *ngIf="productRes"
+          >Are you like to delete product : <b>{{ productRes.designation }}</b
           >?</span
         >
       </div>
@@ -397,39 +252,10 @@
           icon="pi pi-check"
           class="p-button-text"
           label="Yes"
-          (click)="confirmDelete()"
+          (click)="confirmDelete(productRes.id)"
         ></button>
       </ng-template>
     </p-dialog>
-
-    <p-dialog
-      [(visible)]="deleteProductsDialog"
-      header="Confirm"
-      [modal]="true"
-      [style]="{ width: '450px' }"
-    >
-      <div class="flex align-items-center justify-content-center">
-        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-        <span>Are you sure you want to delete selected products?</span>
-      </div>
-      <ng-template pTemplate="footer">
-        <button
-          pButton
-          pRipple
-          icon="pi pi-times"
-          class="p-button-text"
-          label="No"
-          (click)="deleteProductsDialog = false"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-check"
-          class="p-button-text"
-          label="Yes"
-          (click)="confirmDeleteSelected()"
-        ></button>
-      </ng-template>
-    </p-dialog>
+    <!-- delete one  product dialog  -->
   </div>
 </div>

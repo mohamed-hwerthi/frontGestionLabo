@@ -1,7 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Product } from '../salle-tp/salle-tp.component';
-import { Table } from 'primeng/table';
 import { MessageService } from 'primeng/api';
+import { GestionService } from 'src/app/gestionservice';
+import {
+  PreparationProduit,
+  PreparationRequestDto,
+  PreparationResponseDto,
+  ProduitResDto,
+} from 'src/app/models/models';
 
 @Component({
   selector: 'app-preparations',
@@ -11,124 +17,84 @@ import { MessageService } from 'primeng/api';
 })
 export class PreparationsComponent {
   productDialog: boolean = false;
-
   deleteProductDialog: boolean = false;
-
   deleteProductsDialog: boolean = false;
+  preparationPayload: PreparationRequestDto = {
+    designation: '',
+    date: new Date(),
 
-  products: Product[] = [];
-
-  product: Product = {};
-
-  selectedProducts: Product[] = [];
-
+    preparationReqProduits: [],
+  };
   submitted: boolean = false;
-  date: Date | undefined;
   cols: any[] = [];
+  allPreparations: PreparationResponseDto[] = [];
+  rubriqueRes!: PreparationResponseDto;
+  allProducts: ProduitResDto[] = [];
+  visible: boolean = false;
+  productQuantityPayload: PreparationProduit = {
+    idProduit: '',
+    quantite: 0,
+  };
+  skeletonLoaderDisplay: boolean = true;
+  laboType: string[] = [
+    'technique',
+    'scientifique',
+    'informatique',
+    'physique',
+  ];
 
-  statuses: any[] = [];
-
-  rowsPerPageOptions = [5, 10, 20];
-
-  constructor(private messageService: MessageService) {}
+  showDialog() {
+    this.visible = true;
+  }
+  constructor(
+    private messageService: MessageService,
+    private gestionService: GestionService
+  ) {}
 
   ngOnInit() {
-    this.products = [
-      {
-        id: '1000',
-        code: 'f230fh0g3',
-        name: 'Bamboo Watch',
-        description: 'Product Description',
-        image: 'bamboo-watch.jpg',
-        price: 65,
-        category: 'Accessories',
-        quantity: 24,
-        rating: 5,
-      },
-      {
-        id: '1001',
-        code: 'nvklal433',
-        name: 'Black Watch',
-        description: 'Product Description',
-        image: 'black-watch.jpg',
-        price: 72,
-        category: 'Accessories',
-        quantity: 61,
-        rating: 4,
-      },
-      {
-        id: '1002',
-        code: 'zz21cz3c1',
-        name: 'Blue Band',
-        description: 'Product Description',
-        image: 'blue-band.jpg',
-        price: 79,
-        category: 'Fitness',
-        quantity: 2,
-        rating: 3,
-      },
-      // Continuer avec les autres objets...
-    ];
-
-    this.cols = [
-      { field: 'product', header: 'Product' },
-      { field: 'price', header: 'Price' },
-      { field: 'category', header: 'Category' },
-      { field: 'rating', header: 'Reviews' },
-      { field: 'inventoryStatus', header: 'Status' },
-    ];
-
-    this.statuses = [
-      { label: 'INSTOCK', value: 'instock' },
-      { label: 'LOWSTOCK', value: 'lowstock' },
-      { label: 'OUTOFSTOCK', value: 'outofstock' },
-    ];
+    this.getAllPreparation();
+    this.getAllProducts();
+    this.getAllProducts();
   }
 
   openNew() {
-    this.product = {};
     this.submitted = false;
     this.productDialog = true;
   }
 
-  deleteSelectedProducts() {
-    this.deleteProductsDialog = true;
-  }
-
-  editProduct(product: Product) {
-    this.product = { ...product };
+  /*   editProduct(product: Product) {
     this.productDialog = true;
   }
-
-  deleteProduct(product: Product) {
+ */
+  deleteProduct(labo: PreparationResponseDto) {
     this.deleteProductDialog = true;
-    this.product = { ...product };
+    this.rubriqueRes = { ...labo };
   }
-
-  confirmDeleteSelected() {
-    this.deleteProductsDialog = false;
-    this.products = this.products.filter(
-      (val) => !this.selectedProducts.includes(val)
+  confirmDelete(rubriqueId: string | undefined) {
+    this.deletePreparation(rubriqueId);
+    this.deleteProductDialog = false;
+    this.allPreparations = this.allPreparations.filter(
+      (val) => val.id !== rubriqueId
     );
     this.messageService.add({
       severity: 'success',
       summary: 'Successful',
-      detail: 'Products Deleted',
+      detail: 'Rubrique Deleted',
       life: 3000,
     });
-    this.selectedProducts = [];
   }
-
-  confirmDelete() {
-    this.deleteProductDialog = false;
-    this.products = this.products.filter((val) => val.id !== this.product.id);
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Product Deleted',
-      life: 3000,
-    });
-    this.product = {};
+  /**
+   * addProductToPreparation
+   */
+  public addProductToPreparation() {
+    console.log(this.productQuantityPayload);
+    this.preparationPayload.preparationReqProduits = [
+      this.productQuantityPayload,
+      ...this.preparationPayload.preparationReqProduits,
+    ];
+    console.log(this.preparationPayload);
+    this.visible = false;
+    this.skeletonLoaderDisplay = false;
   }
 
   hideDialog() {
@@ -136,68 +102,74 @@ export class PreparationsComponent {
     this.submitted = false;
   }
 
-  saveProduct() {
-    this.submitted = true;
-
-    if (this.product.name?.trim()) {
-      if (this.product.id) {
-        // @ts-ignore
-        /* this.product.inventoryStatus = this.product.inventoryStatus.value
-          ? this.product.inventoryStatus.value
-          : this.product.inventoryStatus; */
-        this.products[this.findIndexById(this.product.id)] = this.product;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Updated',
-          life: 3000,
-        });
-      } else {
-        this.product.id = this.createId();
-        this.product.code = this.createId();
-        this.product.image = 'product-placeholder.svg';
-        // @ts-ignore
-        this.product.inventoryStatus = this.product.inventoryStatus
-          ? this.product.inventoryStatus.value
-          : 'INSTOCK';
-        this.products.push(this.product);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Created',
-          life: 3000,
-        });
+  /* services consumming  */
+  getAllPreparation() {
+    return this.gestionService.getAllPreparation().subscribe(
+      (res: PreparationResponseDto[]) => {
+        console.log(res);
+        this.allPreparations = res;
+      },
+      (err: HttpErrorResponse) => {
+        console.log(err);
       }
-
-      this.products = [...this.products];
-      this.productDialog = false;
-      this.product = {};
-    }
+    );
   }
 
-  findIndexById(id: string): number {
-    let index = -1;
-    for (let i = 0; i < this.products.length; i++) {
-      if (this.products[i].id === id) {
-        index = i;
-        break;
+  /* methode to add labo  , this methode calls the labo methode which calls the service wich work with the back */
+  savePreparation() {
+    this.addPreparation(this.preparationPayload);
+    this.productDialog = false;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successful',
+      detail: 'preparation added successfully',
+      life: 3000,
+    });
+    this.preparationPayload = {
+      designation: '',
+      date: new Date(),
+      preparationReqProduits: [],
+    };
+  }
+  getRubriiqueById(id: string) {
+    return this.gestionService.getCategorieById(id).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
       }
-    }
-
-    return index;
+    );
   }
 
-  createId(): string {
-    let id = '';
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
+  deletePreparation(id: string | undefined) {
+    return this.gestionService
+      .deletePreparation(id)
+      .subscribe((res: void) => {});
   }
-
-  onGlobalFilter(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  addPreparation(preparationPayload: PreparationRequestDto) {
+    return this.gestionService.savePreparation(preparationPayload).subscribe(
+      (res) => {
+        console.log(res);
+        this.allPreparations = [res, ...this.allPreparations];
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+  /**
+   * getAllCategories
+   */
+  public getAllProducts() {
+    return this.gestionService.getAllProduit().subscribe(
+      (res: ProduitResDto[]) => {
+        console.log(res);
+        this.allProducts = res;
+      },
+      (err: HttpErrorResponse) => {
+        console.log(err);
+      }
+    );
   }
 }

@@ -30,7 +30,6 @@ import { DropdownModule } from 'primeng/dropdown';
 
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { ProductsComponent } from './components/products/products.component';
 import { ArmoiresComponent } from './components/armoires/armoires.component';
 import { LaboComponent } from './components/labo/labo.component';
 import { CategorieComponent } from './components/categorie/categorie.component';
@@ -41,6 +40,8 @@ import { ComamndesComponent } from './components/comamndes/comamndes.component';
 import { InventaireComponent } from './components/inventaire/inventaire.component';
 
 import { CalendarModule } from 'primeng/calendar';
+import { ProductsComponent } from './components/products/products.component';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,6 @@ import { CalendarModule } from 'primeng/calendar';
     TopbarComponent,
     SalleTpComponent,
     CrudComponent,
-    ProductsComponent,
     ArmoiresComponent,
     LaboComponent,
     CategorieComponent,
@@ -61,6 +61,7 @@ import { CalendarModule } from 'primeng/calendar';
     TpComponent,
     ComamndesComponent,
     InventaireComponent,
+    ProductsComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -85,6 +86,7 @@ import { CalendarModule } from 'primeng/calendar';
     FormsModule,
     CalendarModule,
     ReactiveFormsModule,
+    SkeletonModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

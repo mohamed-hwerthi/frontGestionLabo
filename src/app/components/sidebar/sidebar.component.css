@@ -1,3 +1,6 @@
 .showSidebar{
   transform: translateX(-400px);
 }
+.sidebar{
+  border: 2px solid red;
+}

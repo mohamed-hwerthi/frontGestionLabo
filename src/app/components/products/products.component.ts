@@ -1,8 +1,15 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Table } from 'primeng/table';
-import { Product } from '../salle-tp/salle-tp.component';
-import { ProductService } from 'src/app/services/product.service';
 import { MessageService } from 'primeng/api';
+import { GestionService } from 'src/app/gestionservice';
+import {
+  ArmoireResDto,
+  CategorieResDto,
+  FournisseurResponseDto,
+  ProduitRequestDto,
+  ProduitResDto,
+  RubriqueResDto,
+} from 'src/app/models/models';
 
 @Component({
   selector: 'app-products',
@@ -12,127 +19,60 @@ import { MessageService } from 'primeng/api';
 })
 export class ProductsComponent {
   productDialog: boolean = false;
-
   deleteProductDialog: boolean = false;
-
   deleteProductsDialog: boolean = false;
-
-  products: Product[] = [];
-
-  product: Product = {};
-
-  selectedProducts: Product[] = [];
-
+  produitPayLoad: ProduitRequestDto = {
+    designation: '',
+    reference: '',
+    quantiteInitiale: 0,
+    idCategorie: '',
+    idRubrique: '',
+    idFournisseur: '',
+    idArmoire: '',
+  };
   submitted: boolean = false;
-
   cols: any[] = [];
-
-  statuses: any[] = [];
-
-  rowsPerPageOptions = [5, 10, 20];
+  allProduits: ProduitResDto[] = [];
+  productRes!: ProduitResDto;
+  allFournisseurs: FournisseurResponseDto[] = [];
+  allCategories: CategorieResDto[] = [];
+  allRubriques: RubriqueResDto[] = [];
+  allArmoires: ArmoireResDto[] = [];
+  allProduitType: string[] = ['chimique', 'materiel'];
+  allUniteMesures: string[] = ['ml', 'l', 'g', 'kg', 'mm', 'm'];
 
   constructor(
-    private productService: ProductService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private gestionService: GestionService
   ) {}
-
   ngOnInit() {
-    this.products = [
-      {
-        id: '1000',
-        code: 'f230fh0g3',
-        name: 'Bamboo Watch',
-        description: 'Product Description',
-        image: 'bamboo-watch.jpg',
-        price: 65,
-        category: 'Accessories',
-        quantity: 24,
-        rating: 5,
-      },
-      {
-        id: '1001',
-        code: 'nvklal433',
-        name: 'Black Watch',
-        description: 'Product Description',
-        image: 'black-watch.jpg',
-        price: 72,
-        category: 'Accessories',
-        quantity: 61,
-        rating: 4,
-      },
-      {
-        id: '1002',
-        code: 'zz21cz3c1',
-        name: 'Blue Band',
-        description: 'Product Description',
-        image: 'blue-band.jpg',
-        price: 79,
-        category: 'Fitness',
-        quantity: 2,
-        rating: 3,
-      },
-      // Continuer avec les autres objets...
-    ];
-
-    this.cols = [
-      { field: 'product', header: 'Product' },
-      { field: 'price', header: 'Price' },
-      { field: 'category', header: 'Category' },
-      { field: 'rating', header: 'Reviews' },
-      { field: 'inventoryStatus', header: 'Status' },
-    ];
-
-    this.statuses = [
-      { label: 'INSTOCK', value: 'instock' },
-      { label: 'LOWSTOCK', value: 'lowstock' },
-      { label: 'OUTOFSTOCK', value: 'outofstock' },
-    ];
+    this.getAllProduits();
+    this.getAllArmoires();
+    this.getAllFournisseur();
+    this.getAllCategories();
+    this.getAllRubriques();
   }
 
   openNew() {
-    this.product = {};
     this.submitted = false;
     this.productDialog = true;
   }
 
-  deleteSelectedProducts() {
-    this.deleteProductsDialog = true;
-  }
-
-  editProduct(product: Product) {
-    this.product = { ...product };
+  /*   editProduct(product: Product) {
     this.productDialog = true;
   }
+ */
 
-  deleteProduct(product: Product) {
-    this.deleteProductDialog = true;
-    this.product = { ...product };
-  }
-
-  confirmDeleteSelected() {
-    this.deleteProductsDialog = false;
-    this.products = this.products.filter(
-      (val) => !this.selectedProducts.includes(val)
-    );
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Products Deleted',
-      life: 3000,
-    });
-    this.selectedProducts = [];
-  }
-
-  confirmDelete() {
+  confirmDelete(idProduit: string | undefined) {
+    this.deleteProduit(idProduit);
     this.deleteProductDialog = false;
-    this.products = this.products.filter((val) => val.id !== this.product.id);
+    this.allProduits = this.allProduits.filter((val) => val.id !== idProduit);
     this.messageService.add({
       severity: 'success',
       summary: 'Successful',
-      detail: 'Product Deleted',
+      detail: 'product  Deleted',
       life: 3000,
     });
-    this.product = {};
   }
 
   hideDialog() {
@@ -140,68 +80,115 @@ export class ProductsComponent {
     this.submitted = false;
   }
 
+  /* services consumming  */
+  getAllProduits() {
+    return this.gestionService.getAllProduit().subscribe(
+      (res: ProduitResDto[]) => {
+        console.log(res);
+        this.allProduits = res;
+      },
+      (err: HttpErrorResponse) => {
+        console.log(err);
+      }
+    );
+  }
+
+  /* methode to add labo  , this methode calls the labo methode which calls the service wich work with the back */
   saveProduct() {
-    this.submitted = true;
-
-    if (this.product.name?.trim()) {
-      if (this.product.id) {
-        // @ts-ignore
-        /* this.product.inventoryStatus = this.product.inventoryStatus.value
-          ? this.product.inventoryStatus.value
-          : this.product.inventoryStatus; */
-        this.products[this.findIndexById(this.product.id)] = this.product;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Updated',
-          life: 3000,
-        });
-      } else {
-        this.product.id = this.createId();
-        this.product.code = this.createId();
-        this.product.image = 'product-placeholder.svg';
-        // @ts-ignore
-        this.product.inventoryStatus = this.product.inventoryStatus
-          ? this.product.inventoryStatus.value
-          : 'INSTOCK';
-        this.products.push(this.product);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Created',
-          life: 3000,
-        });
+    console.log(this.produitPayLoad);
+    this.addProduit();
+    this.productDialog = false;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successful',
+      detail: 'product  added successfully',
+      life: 3000,
+    });
+  }
+  getRubriiqueById(id: string) {
+    return this.gestionService.getCategorieById(id).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
       }
-
-      this.products = [...this.products];
-      this.productDialog = false;
-      this.product = {};
-    }
+    );
+  }
+  deleteProduct(labo: ProduitResDto) {
+    this.deleteProductDialog = true;
+    this.productRes = { ...labo };
   }
 
-  findIndexById(id: string): number {
-    let index = -1;
-    for (let i = 0; i < this.products.length; i++) {
-      if (this.products[i].id === id) {
-        index = i;
-        break;
+  deleteProduit(id: string | undefined) {
+    return this.gestionService.deleteProduit(id).subscribe((res: void) => {});
+  }
+  addProduit() {
+    return this.gestionService.saveProduit(this.produitPayLoad).subscribe(
+      (res) => {
+        console.log(res);
+        this.allProduits = [res, ...this.allProduits];
+      },
+      (err) => {
+        console.log(err);
       }
-    }
-
-    return index;
+    );
+  }
+  /**
+   * getAllRubriques
+   */
+  public getAllRubriques() {
+    return this.gestionService.getAllRubrique().subscribe(
+      (res: RubriqueResDto[]) => {
+        console.log(res);
+        this.allRubriques = res;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+  /**
+   * getAllCategories
+   */
+  public getAllCategories() {
+    return this.gestionService.getAllCategories().subscribe(
+      (res: CategorieResDto[]) => {
+        console.log(res);
+        this.allCategories = res;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
-  createId(): string {
-    let id = '';
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
+  /**
+   * getAllFournisseur  :
+   */
+  public getAllFournisseur() {
+    return this.gestionService.getAllFournisseur().subscribe(
+      (res) => {
+        console.log(res);
+        this.allFournisseurs = res;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
-
-  onGlobalFilter(table: Table, event: Event) {
-    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  /**
+   * getAllArmoires
+   */
+  public getAllArmoires() {
+    return this.gestionService.getAllArmoires().subscribe(
+      (res: ArmoireResDto[]) => {
+        console.log(res);
+        this.allArmoires = res;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }
