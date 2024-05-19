@@ -60,7 +60,7 @@
               {{ product.designation }}
             </td>
             <td style="width: 14%; min-width: 10rem">
-              {{ product.date }}
+              {{ product.date | date }}
             </td>
             <td>
               <div class="flex">
@@ -92,10 +92,12 @@
     <p-dialog
       [(visible)]="productDialog"
       [style]="{ width: '450px' }"
-      header="Labo "
+      header="Preparation "
       [modal]="false"
       class="p-fluid h-12"
       [style]="{ width: '50rem' }"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+      [maximizable]="true"
     >
       <ng-template pTemplate="content">
         <div class="field">
@@ -145,6 +147,8 @@
           [modal]="true"
           [(visible)]="visible"
           [style]="{ width: '30rem' }"
+          [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+          [maximizable]="true"
         >
           <div class="flex align-items-center gap-3 mb-3">
             <p-dropdown

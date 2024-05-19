@@ -36,7 +36,7 @@ export class LoginComponent {
         this.router.navigate(['home']);
       },
       (err: HttpErrorResponse) => {
-        alert(err.error.message);
+        alert('verify  your email or password');
       }
     );
   }

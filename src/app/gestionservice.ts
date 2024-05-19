@@ -73,7 +73,7 @@ export class GestionService {
   getAllTp(): Observable<TpResponseDto[]> {
     return this.http.get<TpResponseDto[]>(`${environment.apiUrl}/tp`);
   }
-  deleteTp(id: string) {
+  deleteTp(id: string | undefined) {
     return this.http.delete<void>(`${environment.apiUrl}/tp/${id}`);
   }
   saveTp(payload: TpRequestDto) {
@@ -152,4 +152,5 @@ export class GestionService {
       payload
     );
   }
+  /* Fournisssuer services --------------------------------------------- */
 }

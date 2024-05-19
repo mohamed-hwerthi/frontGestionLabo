@@ -13,6 +13,7 @@ import { TpComponent } from './components/tp/tp.component';
 import { ArmoiresComponent } from './components/armoires/armoires.component';
 import { ComamndesComponent } from './components/comamndes/comamndes.component';
 import { InventaireComponent } from './components/inventaire/inventaire.component';
+import { FournisseurComponent } from './fournisseur/fournisseur.component';
 
 const routes: Routes = [
   {
@@ -68,6 +69,10 @@ const routes: Routes = [
       {
         path: 'salleTp',
         component: SalleTpComponent,
+      },
+      {
+        path: 'fourn',
+        component: FournisseurComponent,
       },
     ],
   },

@@ -19,7 +19,7 @@
       <!--      tableau d'affichage  -->
       <p-table
         #dt
-        [value]="allCategories"
+        [value]="allFournisseur"
         [columns]="cols"
         responsiveLayout="scroll"
         [rows]="10"
@@ -41,14 +41,14 @@
           <div
             class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
           >
-            <h5 class="m-0">Manage Labo</h5>
+            <h5 class="m-0">Manage Fournisseurs</h5>
           </div>
         </ng-template>
         <!-- les titres du tableau  -->
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="code">Id</th>
-            <th pSortableColumn="name">Designation</th>
+            <th pSortableColumn="code">Designation</th>
+            <th pSortableColumn="name">Categorie</th>
             <th>Actions</th>
           </tr>
         </ng-template>
@@ -57,14 +57,17 @@
         <ng-template pTemplate="body" let-product>
           <tr>
             <td style="width: 14%; min-width: 10rem">
-              <span class="p-column-title">Code</span>
-              {{ product.id }}
+              <span class="p-column-title">Nom</span>
+              {{ product.nom }}
             </td>
             <td style="width: 14%; min-width: 10rem">
-              <span class="p-column-title">Name</span>
-              {{ product.designation }}
+              <span class="p-column-title">Email</span>
+              {{ product.email }}
             </td>
-
+            <td style="width: 14%; min-width: 10rem">
+              <span class="p-column-title">Email</span>
+              {{ product.nmrTel }}
+            </td>
             <td>
               <div class="flex">
                 <!-- fonction edit  -->
@@ -74,7 +77,6 @@
                   pRipple
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
-                  (click)="editProduct(product)"
                 ></button>
                 <!-- fontion delete  -->
                 <button
@@ -96,21 +98,46 @@
     <p-dialog
       [(visible)]="productDialog"
       [style]="{ width: '450px' }"
-      header="Categorie"
+      header="Fournisseurs "
       [modal]="true"
       class="p-fluid h-6"
     >
       <ng-template pTemplate="content">
-        <div class="mm">
-          <div class="field">
-            <input
-              pInputText
-              type="text"
-              placeholder="Designation"
-              class="w-full sm:w-auto"
-              [(ngModel)]="categorie"
-            />
-          </div>
+        <div class="field">
+          <input
+            pInputText
+            type="text"
+            placeholder="Nom"
+            class="w-full sm:w-auto"
+            [(ngModel)]="fournisseurPayload.nom"
+          />
+        </div>
+        <div class="field">
+          <input
+            pInputText
+            type="text"
+            placeholder="Email"
+            class="w-full sm:w-auto"
+            [(ngModel)]="fournisseurPayload.email"
+          />
+        </div>
+        <div class="field">
+          <input
+            pInputText
+            type="text"
+            placeholder="Adresse"
+            class="w-full sm:w-auto"
+            [(ngModel)]="fournisseurPayload.adresse"
+          />
+        </div>
+        <div class="field">
+          <input
+            pInputText
+            type="text"
+            placeholder="Numero tel"
+            class="w-full sm:w-auto"
+            [(ngModel)]="fournisseurPayload.nmrTel"
+          />
         </div>
       </ng-template>
       <!-- dialog add labo  -->
@@ -132,7 +159,7 @@
           label="Save"
           icon="pi pi-check"
           class="p-button-text"
-          (click)="saveCategorie()"
+          (click)="saveFournisseur()"
         ></button>
       </ng-template>
     </p-dialog>
@@ -146,9 +173,9 @@
     >
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-        <span *ngIf="laboRes"
-          >Are you sure you want to delete the categorie
-          <b>{{ laboRes.designation }}</b
+        <span *ngIf="fournisseurRes"
+          >Are you sure you want to delete the fournisseur
+          <b>{{ fournisseurRes.nom }}</b
           >?</span
         >
       </div>
@@ -167,7 +194,7 @@
           icon="pi pi-check"
           class="p-button-text"
           label="Yes"
-          (click)="confirmDelete(laboRes.id)"
+          (click)="confirmDelete(fournisseurRes.id)"
         ></button>
       </ng-template>
     </p-dialog>

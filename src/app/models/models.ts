@@ -9,7 +9,7 @@ export interface ArmoireResDto {
   designation: string;
   salleTp: SalleTpResDto;
 }
-/*   rubrique dto  */
+/*   rubrique dto -------------------------------------------------------- */
 export interface RubriqueReqDto {
   designation: string;
   idCategorie: string;
@@ -20,7 +20,7 @@ export interface RubriqueResDto {
   categorie: CategorieResDto;
 }
 
-/*   categorie dto  */
+/*   categorie dto-------------------------------------------------------------  */
 export interface CategorieReqDto {
   designation: string;
 }
@@ -30,6 +30,7 @@ export interface CategorieResDto {
 }
 /* tp models -------------------------------------------------------------- */
 export interface TpRequestDto {
+  manip: string;
   tpType: TpType;
   jourTp: string;
   idProf: string;
@@ -39,13 +40,13 @@ export interface TpRequestDto {
   idsProduit: string[];
 }
 
-enum TpType {
+export enum TpType {
   CHIMIE,
   PHYSIQUE,
   INFORMATIQUE,
 }
 
-enum NiveauScolaire {
+export enum NiveauScolaire {
   NIVEAU_7,
   NIVEAU_8,
   NIVEAU_9,
@@ -56,14 +57,13 @@ enum NiveauScolaire {
 }
 export interface TpResponseDto {
   id: string;
+  manip: string;
   tpType: TpType;
   jourTp: string;
   idProf: string;
   idSalleTp: string;
   niveauScolaire: NiveauScolaire;
 }
-
-/* preparation models--------------------------------------------------------------- */
 
 /* ---------------------------------------------------------SalleTp models  */
 export interface SalleTpRequestDto {

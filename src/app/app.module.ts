@@ -43,6 +43,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { ProductsComponent } from './components/products/products.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
+import { FournisseurComponent } from './fournisseur/fournisseur.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -63,6 +65,7 @@ import { ChartModule } from 'primeng/chart';
     ComamndesComponent,
     InventaireComponent,
     ProductsComponent,
+    FournisseurComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -89,6 +92,7 @@ import { ChartModule } from 'primeng/chart';
     ReactiveFormsModule,
     SkeletonModule,
     ChartModule,
+    DatePipe
   ],
   providers: [],
   bootstrap: [AppComponent],
