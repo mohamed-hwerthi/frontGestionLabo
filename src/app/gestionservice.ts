@@ -7,6 +7,7 @@ import {
   CategorieResDto,
   FournisseurRequestDto,
   FournisseurResponseDto,
+  PostResponseDto,
   PreparationRequestDto,
   PreparationResponseDto,
   ProduitRequestDto,
@@ -20,6 +21,7 @@ import {
 } from './models/models';
 import { environment } from 'src/environments/environment.development';
 import { Observable } from 'rxjs';
+import { PostRequestDto } from './posts/posts.component';
 
 @Injectable({
   providedIn: 'root',
@@ -153,4 +155,18 @@ export class GestionService {
     );
   }
   /* Fournisssuer services --------------------------------------------- */
+
+  /* -------------------------------------------posts services  */
+  getAllPosts(): Observable<PostResponseDto[]> {
+    return this.http.get<PostResponseDto[]>(`${environment.apiUrl}/posts`);
+  }
+  deletePost(id: string | undefined) {
+    return this.http.delete<void>(`${environment.apiUrl}/posts/${id}`);
+  }
+  savePost(payload: PostRequestDto) {
+    return this.http.post<PostResponseDto>(
+      `${environment.apiUrl}/posts`,
+      payload
+    );
+  }
 }

@@ -45,6 +45,9 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
 import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { DatePipe } from '@angular/common';
+import { PostsComponent } from './posts/posts.component';
+
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 @NgModule({
   declarations: [
@@ -66,6 +69,7 @@ import { DatePipe } from '@angular/common';
     InventaireComponent,
     ProductsComponent,
     FournisseurComponent,
+    PostsComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -92,7 +96,8 @@ import { DatePipe } from '@angular/common';
     ReactiveFormsModule,
     SkeletonModule,
     ChartModule,
-    DatePipe
+    DatePipe,
+    InputTextareaModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

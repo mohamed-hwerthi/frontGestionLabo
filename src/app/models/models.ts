@@ -144,3 +144,16 @@ export interface PreparationResponseDto {
   date: Date;
   preparationReqProduits: PreparationProduit[];
 }
+
+/* ---------------------------------------- post  models  */
+export interface PostRequestDto {
+  title: string;
+  date: Date;
+  content: string;
+}
+export interface PostResponseDto {
+  id: string;
+  title: string;
+  date: Date;
+  content: string;
+}
