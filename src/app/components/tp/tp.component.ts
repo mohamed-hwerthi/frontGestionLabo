@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { GestionService } from 'src/app/gestionservice';
 import {
   NiveauScolaire,
+  PreparationResponseDto,
   ProduitResDto,
   SalleTpResDto,
   TpRequestDto,
@@ -32,6 +33,7 @@ export class TpComponent {
     manip: '',
   };
   allSalleTp: SalleTpResDto[] = [];
+  visiblePrep: boolean = false;
   /*     preparationReqProduits: []={
 
     } */
@@ -57,16 +59,38 @@ export class TpComponent {
   datetime24h: Date[] | undefined;
 
   time: Date[] | undefined;
-  parseCustomDate(dateString: string): Date {
-    const [year, month, day, hour, minute, second, nanosecond] = dateString
-      .split(',')
-      .map(Number);
-    const millisecond = Math.floor(nanosecond / 1_000_000); // Convert nanoseconds to milliseconds
-    return new Date(year, month - 1, day, hour, minute, second, millisecond);
+  tpAssocaitedPreparations: string[] = [];
+  idProduitToAddToTp: string = '';
+  idPreparationToAdd: string = '';
+  tpAssocaitedProduits: string[] = [];
+  allPreparations: PreparationResponseDto[] = [];
+  formatJourTp(jourTp: number[]): string {
+    const [year, month, day, hour, minute, second] = jourTp;
+    return `${day.toString().padStart(2, '0')}/${month
+      .toString()
+      .padStart(2, '0')}/${year} ${hour.toString().padStart(2, '0')}:${minute
+      .toString()
+      .padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+  }
+  addPreparationToTp(idPrepararation: string) {
+    this.tpAssocaitedPreparations = [
+      idPrepararation,
+      ...this.tpAssocaitedPreparations,
+    ];
+    this.visiblePrep = false;
+    console.log(this.tpAssocaitedPreparations);
+  }
+  addProductToTp(idProduct: string) {
+    this.tpAssocaitedProduits = [idProduct, ...this.tpAssocaitedProduits];
+    console.log(this.tpAssocaitedProduits);
+    this.visible = false;
   }
 
   showDialog() {
     this.visible = true;
+  }
+  showDialog2() {
+    this.visiblePrep = true;
   }
   constructor(
     private messageService: MessageService,
@@ -75,9 +99,9 @@ export class TpComponent {
 
   ngOnInit() {
     this.getAllTp();
-    /*    this.getAllProducts();
-    this.getAllProducts(); */
+    this.getAllProducts();
     this.getALlSalleTp();
+    this.getAllPreapration();
   }
 
   openNew() {
@@ -130,7 +154,7 @@ export class TpComponent {
         console.log(res);
         this.allTps = res;
         this.allTps.map((tp) => {
-          this.parseCustomDate(tp.jourTp);
+          this.formatJourTp(tp.jourTp);
         });
       },
       (err: HttpErrorResponse) => {
@@ -141,6 +165,9 @@ export class TpComponent {
 
   /* methode to add labo  , this methode calls the labo methode which calls the service wich work with the back */
   saveTp() {
+    this.tpPayload.idsPrepararation = this.tpAssocaitedPreparations;
+    this.tpPayload.idsProduit = this.tpAssocaitedProduits;
+    console.log(this.tpPayload);
     this.addPreparation(this.tpPayload);
     this.productDialog = false;
     this.messageService.add({
@@ -199,6 +226,19 @@ export class TpComponent {
         this.allSalleTp = res;
       },
       (err) => {}
+    );
+  }
+  /**
+   * getAllPreapration
+   */
+  public getAllPreapration() {
+    return this.gestionService.getAllPreparation().subscribe(
+      (res) => {
+        this.allPreparations = res;
+      },
+      (err) => {
+        console.log(err);
+      }
     );
   }
 }

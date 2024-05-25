@@ -65,7 +65,7 @@
               {{ tp.type }}
             </td>
             <td style="width: 14%; min-width: 10rem">
-              {{ tp.jourTp }}
+              {{ tp.jourTp | date : "dd/MM/yyyy HH:mm:ss" }}
             </td>
             <td style="width: 14%; min-width: 10rem">salle1</td>
             <td>
@@ -120,6 +120,7 @@
             [(ngModel)]="tpPayload.tpType"
             [options]="type"
             placeholder="Type Tp"
+            appendTo="body"
           >
           </p-dropdown>
         </div>
@@ -142,42 +143,30 @@
         </div>
         <div class="field">
           <p-dropdown
-            [(ngModel)]="tpPayload.idSalleTp"
+            [(ngModel)]="tpPayload.niveauScolaire"
             [options]="niveauScolaire"
             placeholder="Niveau Scolaire"
           >
           </p-dropdown>
         </div>
-
-        <!--    <p-table
-          [value]="tpPayload.preparationReqProduits"
-          [tableStyle]="{ 'min-width': '50rem' }"
-          *ngIf="!skeletonLoaderDisplay"
-        >
+        <p-table [value]="tpAssocaitedProduits">
           <ng-template pTemplate="header">
             <tr>
               <th>Produit</th>
-              <th>quantite</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-tp>
+          <ng-template pTemplate="body" let-product>
             <tr
               [ngClass]="{
-                'row-accessories': tp.category === 'Accessories'
+                'row-accessories': product.category === 'Accessories'
               }"
             >
-              <td>{{ tp.idProduit }}</td>
-              <td>{{ tp.quantite }}</td>
+              <td>{{ product }}</td>
             </tr>
           </ng-template>
-        </p-table> -->
-        <!--  <div *ngIf="skeletonLoaderDisplay" class="field">
-          <p-skeleton styleClass="mb-2" />
-          <p-skeleton styleClass="mb-2" />
-          <p-skeleton styleClass="mb-2" />
-        </div> -->
-        <!--        <p-button (click)="showDialog()" label="Ajouter produit" /> -->
-        <!--   <p-dialog
+        </p-table>
+        <p-button (click)="showDialog()" label="Ajouter produit" />
+        <p-dialog
           header="Add Product"
           [modal]="true"
           [(visible)]="visible"
@@ -188,21 +177,13 @@
           <div class="flex align-items-center gap-3 mb-3">
             <p-dropdown
               [options]="allProducts"
-              [(ngModel)]="productQuantityPayload.idProduit"
+              [(ngModel)]="idProduitToAddToTp"
               optionLabel="designation"
               optionValue="id"
               placeholder="Select Product"
+              appendTo="body"
             >
             </p-dropdown>
-
-            <input
-              pInputText
-              id="quantite"
-              class="flex-auto"
-              autocomplete="off"
-              placeholder="quantite"
-              [(ngModel)]="productQuantityPayload.quantite"
-            />
           </div>
 
           <div class="flex justify-content-end gap-2">
@@ -211,9 +192,63 @@
               severity="secondary"
               (click)="visible = false"
             />
-            <p-button label="Save" (click)="addProductToPreparation()" />
+            <p-button
+              label="Save"
+              (click)="addProductToTp(idProduitToAddToTp)"
+            />
           </div>
-        </p-dialog> -->
+        </p-dialog>
+        <br /><br /><br />
+        <p-table [value]="tpAssocaitedPreparations">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Preapations</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product>
+            <tr
+              [ngClass]="{
+                'row-accessories': product.category === 'Accessories'
+              }"
+            >
+              <td>{{ product }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <br /><br />
+        <p-button (click)="showDialog2()" label="Ajouter Preparation" />
+        <p-dialog
+          header="Add Product"
+          [modal]="true"
+          [(visible)]="visiblePrep"
+          [style]="{ width: '30rem' }"
+          [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+          [maximizable]="true"
+        >
+          <div class="flex align-items-center gap-3 mb-3">
+            <p-dropdown
+              [options]="allPreparations"
+              [(ngModel)]="idPreparationToAdd"
+              optionLabel="designation"
+              optionValue="id"
+              placeholder="Select  Preparation"
+              appendTo="body"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="flex justify-content-end gap-2">
+            <p-button
+              label="Cancel"
+              severity="secondary"
+              (click)="visiblePrep = false"
+            />
+            <p-button
+              label="Save"
+              (click)="addPreparationToTp(idPreparationToAdd)"
+            />
+          </div>
+        </p-dialog>
       </ng-template>
 
       <!-- dialog add labo  -->

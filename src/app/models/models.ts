@@ -59,7 +59,7 @@ export interface TpResponseDto {
   id: string;
   manip: string;
   tpType: TpType;
-  jourTp: string;
+  jourTp: number[];
   idProf: string;
   idSalleTp: string;
   niveauScolaire: NiveauScolaire;
@@ -156,4 +156,29 @@ export interface PostResponseDto {
   title: string;
   date: Date;
   content: string;
+}
+export interface ProduitToAddToTp {
+  id: string;
+  quantity: number;
+}
+
+/* ---------------------------------------------------------------commandes models*/
+export interface CommandeRequestDto {
+  designation: string;
+  date: string; // LocalDate should be represented as a string in ISO format
+  observation: string;
+  numero: number;
+  produitCommandes: ProduitCommande[];
+}
+export interface ProduitCommande {
+  nomProduit: string;
+  quantite: string;
+}
+export interface CommandeResponseDto {
+  id: string;
+  designation: string;
+  date: string; // LocalDate should be represented as a string in ISO format
+  observation: string;
+  numero: number;
+  produitCommandes: ProduitCommande[];
 }

@@ -5,6 +5,8 @@ import {
   ArmoireResDto,
   CategorieReqDto,
   CategorieResDto,
+  CommandeRequestDto,
+  CommandeResponseDto,
   FournisseurRequestDto,
   FournisseurResponseDto,
   PostResponseDto,
@@ -166,6 +168,21 @@ export class GestionService {
   savePost(payload: PostRequestDto) {
     return this.http.post<PostResponseDto>(
       `${environment.apiUrl}/posts`,
+      payload
+    );
+  }
+  /* commande services ------------------------------- */
+  getAllCommande(): Observable<CommandeResponseDto[]> {
+    return this.http.get<CommandeResponseDto[]>(
+      `${environment.apiUrl}/commande`
+    );
+  }
+  deleteCommande(id: string | undefined) {
+    return this.http.delete<void>(`${environment.apiUrl}/commande/${id}`);
+  }
+  saveCommande(payload: CommandeRequestDto) {
+    return this.http.post<CommandeResponseDto>(
+      `${environment.apiUrl}/commande`,
       payload
     );
   }
