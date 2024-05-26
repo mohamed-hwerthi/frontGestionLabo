@@ -15,6 +15,7 @@ import { ComamndesComponent } from './components/comamndes/comamndes.component';
 import { InventaireComponent } from './components/inventaire/inventaire.component';
 import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { PostsComponent } from './posts/posts.component';
+import { InvDComponent } from './inv-d/inv-d.component';
 
 const routes: Routes = [
   {
@@ -64,8 +65,12 @@ const routes: Routes = [
         component: ComamndesComponent,
       },
       {
-        path: 'inv',
+        path: 'durable',
         component: InventaireComponent,
+      },
+      {
+        path: 'consommable',
+        component: InvDComponent,
       },
       {
         path: 'salleTp',

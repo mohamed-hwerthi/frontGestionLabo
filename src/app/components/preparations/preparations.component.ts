@@ -6,6 +6,7 @@ import {
   PreparationProduit,
   PreparationRequestDto,
   PreparationResponseDto,
+  ProduitRequestDto,
   ProduitResDto,
 } from 'src/app/models/models';
 
@@ -24,6 +25,7 @@ export class PreparationsComponent {
     date: new Date(),
 
     preparationReqProduits: [],
+    quantiteEau: '',
   };
   submitted: boolean = false;
   cols: any[] = [];
@@ -31,6 +33,15 @@ export class PreparationsComponent {
   rubriqueRes!: PreparationResponseDto;
   allProducts: ProduitResDto[] = [];
   visible: boolean = false;
+  selectedProductToAdd: ProduitRequestDto = {
+    designation: '',
+    reference: '',
+    quantiteInitiale: 0,
+    idCategorie: '',
+    idRubrique: '',
+    idFournisseur: '',
+    idArmoire: '',
+  };
   productQuantityPayload: PreparationProduit = {
     idProduit: '',
     quantite: 0,
@@ -87,14 +98,32 @@ export class PreparationsComponent {
    * addProductToPreparation
    */
   public addProductToPreparation() {
-    console.log(this.productQuantityPayload);
-    this.preparationPayload.preparationReqProduits = [
-      this.productQuantityPayload,
-      ...this.preparationPayload.preparationReqProduits,
-    ];
-    console.log(this.preparationPayload);
-    this.visible = false;
-    this.skeletonLoaderDisplay = false;
+    console.log(this.productQuantityPayload.idProduit);
+    //ensure that the  ququntity added is under the quantity restant :
+    let product = this.allProducts.find((product) => {
+      return product.id === this.productQuantityPayload.idProduit;
+    });
+    console.log(product?.quantiteRestante);
+    if (product?.quantiteRestante || product?.quantiteRestante == 0) {
+      if (product?.quantiteRestante >= this.productQuantityPayload.quantite) {
+        this.preparationPayload.preparationReqProduits = [
+          this.productQuantityPayload,
+          ...this.preparationPayload.preparationReqProduits,
+        ];
+        console.log(this.preparationPayload);
+        this.visible = false;
+        this.skeletonLoaderDisplay = false;
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `!!la quantite du produit doit etre inferieur a la quantite restante ${product.quantiteInitiale}  ${product.uniteMesure}`,
+          life: 3000,
+        });
+      }
+    } else {
+      alert('on ne peux pas ajouter  , sorter de la page et retourner');
+    }
   }
 
   hideDialog() {
@@ -119,6 +148,13 @@ export class PreparationsComponent {
   savePreparation() {
     this.addPreparation(this.preparationPayload);
     this.productDialog = false;
+    this.preparationPayload.preparationReqProduits = [];
+    this.preparationPayload = {
+      designation: '',
+      date: new Date(),
+      quantiteEau: '',
+      preparationReqProduits: [],
+    };
     this.messageService.add({
       severity: 'success',
       summary: 'Successful',
@@ -127,6 +163,8 @@ export class PreparationsComponent {
     });
     this.preparationPayload = {
       designation: '',
+      quantiteEau: '',
+
       date: new Date(),
       preparationReqProduits: [],
     };
@@ -171,5 +209,8 @@ export class PreparationsComponent {
         console.log(err);
       }
     );
+  }
+  choosePoductToAdd() {
+    console.log('jkdhkaljdlja');
   }
 }

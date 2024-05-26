@@ -49,6 +49,7 @@
           <tr>
             <th pSortableColumn="code">Designation</th>
             <th pSortableColumn="name">Date</th>
+
             <th>Actions</th>
           </tr>
         </ng-template>
@@ -62,6 +63,7 @@
             <td style="width: 14%; min-width: 10rem">
               {{ product.date | date }}
             </td>
+
             <td>
               <div class="flex">
                 <!-- fonction edit  -->
@@ -108,6 +110,16 @@
             class="w-full sm:w-auto"
             [(ngModel)]="preparationPayload.designation"
           />
+          <br /><br />
+          <div class="field">
+            <input
+              pInputText
+              type="text"
+              placeholder="quantite Eau "
+              class="w-full sm:w-auto"
+              [(ngModel)]="preparationPayload.quantiteEau"
+            />
+          </div>
         </div>
         <div class="field">
           <p-calendar [(ngModel)]="preparationPayload.date" />
@@ -157,9 +169,11 @@
               optionLabel="designation"
               optionValue="id"
               placeholder="Select Product"
+              (onClick)="choosePoductToAdd()"
+              appendTo="body"
             >
             </p-dropdown>
-
+            <!--
             <input
               pInputText
               id="quantite"
@@ -167,6 +181,16 @@
               autocomplete="off"
               placeholder="quantite"
               [(ngModel)]="productQuantityPayload.quantite"
+            /> -->
+            <p-inputNumber
+              id="quantite"
+              class="flex-auto"
+              autocomplete="off"
+              placeholder="quantite"
+              [(ngModel)]="productQuantityPayload.quantite"
+              mode="decimal"
+              inputId="withoutgrouping"
+              [useGrouping]="false"
             />
           </div>
 

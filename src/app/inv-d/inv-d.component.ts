@@ -1,17 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Table } from 'primeng/table';
+import { Component } from '@angular/core';
+import { ProduitResDto } from '../models/models';
 import { MessageService } from 'primeng/api';
-import { ProduitResDto } from 'src/app/models/models';
-import { GestionService } from 'src/app/gestionservice';
+import { GestionService } from '../gestionservice';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-inventaire',
-  templateUrl: './inventaire.component.html',
-  styleUrls: ['./inventaire.component.css'],
+  selector: 'app-inv-d',
+  templateUrl: './inv-d.component.html',
+  styleUrls: ['./inv-d.component.css'],
   providers: [MessageService],
 })
-export class InventaireComponent implements OnInit {
+export class InvDComponent {
   productDialog: boolean = false;
   deleteProductDialog: boolean = false;
   deleteProductsDialog: boolean = false;
@@ -37,7 +36,7 @@ export class InventaireComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: `!!la quantite Perdu doit etre inferieur a la quantite restante ${product.quantiteInitiale}  ${product.uniteMesure}`,
+            detail: `!!la quantite perdu  doit etre inferieur a la quantite restante ${product.quantiteInitiale}  ${product.uniteMesure}`,
             life: 3000,
           });
           p.quanitePerdu = 0;
@@ -69,7 +68,7 @@ export class InventaireComponent implements OnInit {
       (res: ProduitResDto[]) => {
         this.allProducts = res;
         this.filtredPRoducts = this.allProducts.filter((e) => {
-          return e.type == 'materiel';
+          return e.type == 'chimique';
         });
 
         console.log(this.allProducts);
@@ -95,12 +94,12 @@ export class InventaireComponent implements OnInit {
           console.log(err);
         }
       );
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Successful',
-        detail: 'Inventaire successfully done',
-        life: 3000,
-      });
+    });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successful',
+      detail: 'Invetaire successfully done  ',
+      life: 3000,
     });
   }
 }

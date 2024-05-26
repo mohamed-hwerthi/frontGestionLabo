@@ -94,6 +94,11 @@ export interface ProduitResDto {
   reference: string;
   type: ProduitType;
   quantiteInitiale: number;
+
+  quantiteUtilise: number;
+  quantiteRestante: number;
+  quanitePerdu: number;
+
   categorie?: CategorieResDto;
   fournisseur?: any;
   uniteMesure: UniteMesure;
@@ -101,8 +106,8 @@ export interface ProduitResDto {
   armoire?: ArmoireResDto;
 }
 export enum ProduitType {
-  chimique,
-  materiel,
+  chimique = 'chimique',
+  materiel = 'materiel',
 }
 export enum UniteMesure {
   ml,
@@ -132,6 +137,7 @@ export interface FournisseurResponseDto {
 export interface PreparationRequestDto {
   designation: string;
   date: Date;
+  quantiteEau: string;
   preparationReqProduits: PreparationProduit[];
 }
 export interface PreparationProduit {
@@ -140,6 +146,7 @@ export interface PreparationProduit {
 }
 export interface PreparationResponseDto {
   id: string;
+  quantiteEau: string;
   designation: string;
   date: Date;
   preparationReqProduits: PreparationProduit[];

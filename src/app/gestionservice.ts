@@ -186,4 +186,12 @@ export class GestionService {
       payload
     );
   }
+
+  /* ---------------------------- inventaire services  */
+  doInvetaire(payload: ProduitResDto) {
+    return this.http.put<CommandeResponseDto>(
+      `${environment.apiUrl}/products/inventaire`,
+      payload
+    );
+  }
 }

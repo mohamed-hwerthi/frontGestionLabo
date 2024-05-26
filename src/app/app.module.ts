@@ -48,6 +48,7 @@ import { DatePipe } from '@angular/common';
 import { PostsComponent } from './posts/posts.component';
 
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InvDComponent } from './inv-d/inv-d.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     ProductsComponent,
     FournisseurComponent,
     PostsComponent,
+    InvDComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -98,6 +100,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     ChartModule,
     DatePipe,
     InputTextareaModule,
+    InputNumberModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
